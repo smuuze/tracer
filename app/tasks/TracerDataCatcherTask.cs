@@ -9,6 +9,7 @@ using Connection;
 using Connection.SerialIO;
 using Tracer.app.types;
 using Tracer.app.modules;
+using Debug;
 
 namespace Tracer.app.task
 {
@@ -28,10 +29,10 @@ namespace Tracer.app.task
         private BasicTaskStates actualTaskState;
 
         /// <summary>
-        /// The connection
+        /// The frame start
         /// </summary>
-        private ICommonConnectionInterface connection;
-
+        private byte[] frameStart;
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="TracerDataCatcherTask"/> class.
         /// </summary>
@@ -40,8 +41,12 @@ namespace Tracer.app.task
         public TracerDataCatcherTask(TaskEngine engine, long timeout)
             : base(engine, timeout)
         {
-            connection = SerialIOFactory.getInstance().getSerialConnection();
             actualTaskState = BasicTaskStates.TASK_STATE_ILDE;
+            debugMode = Debug.DEBUG_MODE.CONSOLE;
+
+            frameStart = new byte[TracerFrame.HEADER_PREFIX_DATA_LENGTH];
+
+            debug("TracerDataCatcherTask() - Created");
         }
 
         /// <summary>
@@ -74,11 +79,6 @@ namespace Tracer.app.task
         {
             markExecutionTime();
 
-            if (connection.numBytesAvailable() == 0)
-            {
-                return;
-            }
-
             switch (actualTaskState)
             {
                 default:
@@ -88,23 +88,23 @@ namespace Tracer.app.task
                     {
                         break;
                     }
-                       
-                    System.Console.WriteLine("TracerDataCatcherTask.execute() - Starting Trace catching");
+
+                    debug("TracerDataCatcherTask.execute() - Starting Trace catching");
                     actualTaskState = BasicTaskStates.TASK_STATE_INIT;
 
                     break;
 
                 case BasicTaskStates.TASK_STATE_INIT:
 
-                    connection.configure(getContext().Comport, getContext().Baudrate, DATABITS.DATABITS_8, PARITY.NONE, STOPBIT.ONE);
-                    if (connection.open() != ERR_CODES.OK)
+                    getContext().Connection.configure(getContext().Comport, getContext().Baudrate, DATABITS.DATABITS_8, PARITY.NONE, STOPBIT.ONE);
+                    if (getContext().Connection.open() != ERR_CODES.OK)
                     {
-                        System.Console.WriteLine("TracerDataCatcherTask.execute() - Opening Comport has FAILED !!! ---");
+                        debug(DEBUG_LEVEL.ERROR, "TracerDataCatcherTask.execute() - Opening Comport has FAILED !!! ---");
                         actualTaskState = BasicTaskStates.TASK_STATE_ILDE;
                     }
                     else
                     {
-                        System.Console.WriteLine("TracerDataCatcherTask.execute() - Opening Comport succeeded");
+                        debug("TracerDataCatcherTask.execute() - Opening Comport succeeded");
                         actualTaskState = BasicTaskStates.TASK_STATE_RUNNING;
                     }
 
@@ -114,13 +114,8 @@ namespace Tracer.app.task
 
                     if (!getContext().TraceActive)
                     {
-                        System.Console.WriteLine("TracerDataCatcherTask.execute() - Trace catching has been stopped");
+                        debug("TracerDataCatcherTask.execute() - Trace catching has been stopped");
                         actualTaskState = BasicTaskStates.TASK_STATE_FINISH;
-                        break;
-                    }
-
-                    if (connection.numBytesAvailable() == 0)
-                    {
                         break;
                     }
 
@@ -129,14 +124,14 @@ namespace Tracer.app.task
                     break;
 
                 case BasicTaskStates.TASK_STATE_FINISH:
-                    if (connection.close() != ERR_CODES.OK)
+                    if (getContext().Connection.close() != ERR_CODES.OK)
                     {
-                        System.Console.WriteLine("TracerDataCatcherTask.execute() - Closing Comport has FAILED !!! ---");
+                        debug(DEBUG_LEVEL.ERROR, "TracerDataCatcherTask.execute() - Closing Comport has FAILED !!! ---");
                         actualTaskState = BasicTaskStates.TASK_STATE_ILDE;
                     }
                     else
                     {
-                        System.Console.WriteLine("TracerDataCatcherTask.execute() - Closing Comport succeeded");
+                        debug("TracerDataCatcherTask.execute() - Closing Comport succeeded");
                         actualTaskState = BasicTaskStates.TASK_STATE_RUNNING;
                     }
                     break;
@@ -156,7 +151,12 @@ namespace Tracer.app.task
         /// </summary>
         public void terminate()
         {
+            actualTaskState = BasicTaskStates.TASK_STATE_ILDE;
 
+            if (getContext().Connection.close() != ERR_CODES.OK)
+            {
+                debug(DEBUG_LEVEL.ERROR, "TracerDataCatcherTask.terminate() - Closing Comport has FAILED !!! ---");
+            }
         }
 
         /// <summary>
@@ -164,14 +164,37 @@ namespace Tracer.app.task
         /// </summary>
         private void loadBytesFromInterface()
         {
-            while (connection.numBytesAvailable() != 0)
+            if (getContext().Connection.numBytesAvailable() == 0)
             {
-                // get number of following bytes
-                byte[] byteCountRaw = connection.read(2, 10);
-                int byteCount = (int)(((int)byteCountRaw[1] << 8) + (int)byteCountRaw[0]);
-
-                getTraceTable().addElement(TraceParser.getInstance().parseTraceData(connection.read(byteCount, 10)));
+                return;
             }
+
+            int headerIndex = 0;
+
+            while (headerIndex < TracerFrame.HEADER_PREFIX_DATA_LENGTH)
+            {
+                byte headerByte = getContext().Connection.read(1, 10000)[0];
+
+                if (headerByte != TracerFrame.HEADER_PREFIX_DATA_BYTE)
+                {
+                    headerIndex = 0;
+                    continue;
+                }
+
+                headerIndex += 1;
+            }
+
+            if (headerIndex != TracerFrame.HEADER_PREFIX_DATA_LENGTH)
+            {
+                return;
+            }
+
+            // get number of following bytes
+            byte[] byteCountRaw = getContext().Connection.read(2, 10000);
+            int byteCount = (int)(((int)byteCountRaw[0] << 8) + (int)byteCountRaw[1]);
+
+            debug("TracerDataCatcherTask.execute() - New Tracedata - Length: " + byteCount);
+            getTraceTableRaw().addRawElement(TraceParser.getInstance().parseTraceData(byteCount, getContext().Connection.read(byteCount, 10000)));
         }
     }
 }

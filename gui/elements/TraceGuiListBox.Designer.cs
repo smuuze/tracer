@@ -1,6 +1,6 @@
-﻿namespace Tracer.src.gui
+﻿namespace Tracer.gui
 {
-    partial class TraceMainListBox
+    partial class TraceGuiListBox
     {
         /// <summary>
         /// Required designer variable.

@@ -17,7 +17,7 @@ namespace Tracer.app.types
         public const byte TRACE_TYPE_ARRAY = 0x05;
     }
 
-    enum TraceType
+    public enum TraceType
     {
         UNKNOWN = TraceTypeConstants.TRACE_TYPE_UNKNOWN,
         PASS = TraceTypeConstants.TRACE_TYPE_PASS,

@@ -111,6 +111,8 @@ namespace Connection.SerialIO
                 return ERR_CODES.ALREADY_OPEN;
             }
 
+            System.Console.WriteLine("SerialIO.open() - Comport: " + sio.PortName + " / Baudrate: " + sio.BaudRate);
+
             try
             {
                 sio.Open();

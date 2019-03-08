@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Debug;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TaskEngineModule;
 using Tracer.app.task;
 using Tracer.app.types;
-using Tracer.src.gui;
+using Tracer.gui;
 
 namespace Tracer.app.task
 {
@@ -30,7 +32,8 @@ namespace Tracer.app.task
         public TracerFileLoadTask(TaskEngine engine, long timeout)
             : base(engine, timeout)
         {
-
+            debugMode = Debug.DEBUG_MODE.FILE;
+            debug("TracerFileLoadTask() - Created");
         }
 
         /// <summary>
@@ -73,12 +76,14 @@ namespace Tracer.app.task
                         break;
                     }
 
-                    if (getTraceTable().getSize() == 0)
+                    if (getTraceTableRaw().getSize() == 0)
                     {
                         break;
                     }
 
+                    debug("TracerFileLoadTask.execute() - Starting File loading");
                     actualTaskState = BasicTaskStates.TASK_STATE_INIT;
+
                     break;
 
                 case BasicTaskStates.TASK_STATE_INIT:
@@ -94,43 +99,31 @@ namespace Tracer.app.task
                         break;
                     }
 
-                    while (getTraceTable().getSize() != 0)
+                    while (getTraceTableRaw().getSize() != 0)
                     {
-                        TraceElement traceElement = getTraceTable().getNext();
+                        TraceElement traceElement = getTraceTableRaw().getNext();
 
                         if (traceElement.Type == TraceType.UNKNOWN)
                         {
                             continue;
                         }
 
-                        string[] fileContent = getFileFactory().getFileContentAsLineArray(getContext().BasicFilePath + traceElement.FileName);
+                        string filePath = (getContext().BasicFilePath + traceElement.FileName).Replace("/","\\");
+                        debug("TracerFileLoadTask.execute() - Loading File: " + filePath);
+
+                        string[] fileContent = getFileFactory().getFileContentAsLineArray(filePath);
 
                         if (traceElement.LineNumber > fileContent.Length - 1)
                         {
+                            debug(DEBUG_LEVEL.ERROR, "TracerFileLoadTask.execute() - File not found !!! --- (" + filePath + ")");
                             continue;
                         }
-                        
-                        TraceMainListBoxItem newListBoxItem = null;
 
-                        switch (traceElement.Type)
-                        {
-                            case TraceType.BYTE:
-                                newListBoxItem = new TraceMainListBoxItem(traceElement.FileName, fileContent[traceElement.LineNumber], traceElement.getByte());
-                                break;
-
-                            case TraceType.WORD:
-                                newListBoxItem = new TraceMainListBoxItem(traceElement.FileName, fileContent[traceElement.LineNumber], traceElement.getWord());
-                                break;
-
-                            case TraceType.LONG:
-                                newListBoxItem = new TraceMainListBoxItem(traceElement.FileName, fileContent[traceElement.LineNumber], traceElement.getLong());
-                                break;
-
-                            case TraceType.ARRAY:
-                                newListBoxItem = new TraceMainListBoxItem(traceElement.FileName, fileContent[traceElement.LineNumber], traceElement.getArray());
-                                break;
-                        }
+                        traceElement.CodeLine = fileContent[traceElement.LineNumber];
+                        getTraceTable().addElement(traceElement);
                     }
+
+                    this.invokeEvent(TracerEventType.NEW_TRACE_RECORD);
 
                     break;
 

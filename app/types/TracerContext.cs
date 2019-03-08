@@ -1,6 +1,7 @@
 ﻿using Connection;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,6 +37,11 @@ namespace Tracer.app.types
         private static TracerContext instance = null;
 
         /// <summary>
+        /// The i connection
+        /// </summary>
+        private ICommonConnectionInterface connection;
+
+        /// <summary>
         /// The _lock instance
         /// </summary>
         private static object _lockInstance = new object();
@@ -51,9 +57,13 @@ namespace Tracer.app.types
             try
             {
                 string[] args = Environment.GetCommandLineArgs();
-                if (args != null && args.Length != 0)
+                if (args != null && args.Length > 1)
                 {
-                    basicFilePath = args[0];
+                    basicFilePath = args[1];
+                }
+                else
+                {
+                    basicFilePath = Directory.GetCurrentDirectory() + "/";
                 }
             }
             catch (NotSupportedException e)
@@ -152,6 +162,23 @@ namespace Tracer.app.types
             set
             {
                 basicFilePath = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the connection.
+        /// </summary>
+        /// <value>
+        /// The connection.
+        /// </value>
+        public ICommonConnectionInterface Connection{
+            get
+            {
+                return connection;
+            }
+            set
+            {
+                connection = value;
             }
         }
     }

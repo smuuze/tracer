@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Tracer.app.types;
 
-namespace Tracer.src.gui
+namespace Tracer.gui
 {
-    class TraceMainListBoxItem
+    class TraceGuiListItem
     {
         private TraceType type;
 
@@ -15,6 +15,11 @@ namespace Tracer.src.gui
         /// The code line
         /// </summary>
         private string codeLine;
+
+        /// <summary>
+        /// The line number
+        /// </summary>
+        private int lineNumber;
 
         /// <summary>
         /// The file name
@@ -42,75 +47,20 @@ namespace Tracer.src.gui
         private byte[] dataArray;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TraceMainListBoxItem"/> class.
+        /// Traces the GUI element.
         /// </summary>
-        /// <param name="f">The f.</param>
-        /// <param name="c">The c.</param>
-        /// <param name="d">The d.</param>
-        public TraceMainListBoxItem(string f, string c, byte d)
+        /// <param name="traceElement">The trace element.</param>
+        public TraceGuiListItem(TraceElement traceElement)
         {
-            type = TraceType.BYTE;
-            codeLine = c;
-            fileName = f;
+            type = traceElement.Type;
+            codeLine = traceElement.CodeLine;
+            fileName = traceElement.FileName;
+            lineNumber = traceElement.LineNumber;
 
-            dataByte = d;
-            dataWord = 0;
-            dataLong = 0;
-            dataArray = new byte[0];
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TraceMainListBoxItem"/> class.
-        /// </summary>
-        /// <param name="f">The f.</param>
-        /// <param name="c">The c.</param>
-        /// <param name="d">The d.</param>
-        public TraceMainListBoxItem(string f, string c, UInt16 d)
-        {
-            type = TraceType.WORD;
-            codeLine = c;
-            fileName = f;
-
-            dataByte = 0;
-            dataWord = d;
-            dataLong = 0;
-            dataArray = new byte[0];
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TraceMainListBoxItem"/> class.
-        /// </summary>
-        /// <param name="f">The f.</param>
-        /// <param name="c">The c.</param>
-        /// <param name="d">The d.</param>
-        public TraceMainListBoxItem(string f, string c, UInt32 d)
-        {
-            type = TraceType.LONG;
-            codeLine = c;
-            fileName = f;
-
-            dataByte = 0;
-            dataWord = 0;
-            dataLong = d;
-            dataArray = new byte[0];
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TraceMainListBoxItem"/> class.
-        /// </summary>
-        /// <param name="f">The f.</param>
-        /// <param name="c">The c.</param>
-        /// <param name="d">The d.</param>
-        public TraceMainListBoxItem(string f, string c, byte[] d)
-        {
-            type = TraceType.ARRAY;
-            codeLine = c;
-            fileName = f;
-
-            dataByte = 0;
-            dataWord = 0;
-            dataLong = 0;
-            dataArray = d;
+            dataByte = traceElement.getByte();
+            dataWord = traceElement.getWord();
+            dataLong = traceElement.getLong();
+            dataArray = traceElement.getArray();
         }
 
         /// <summary>
@@ -133,11 +83,25 @@ namespace Tracer.src.gui
         /// <value>
         /// The name of the file.
         /// </value>
-        private string FileName
+        public string FileName
         {
             get
             {
                 return fileName;
+            }
+        }
+
+        /// <summary>
+        /// Gets the line number.
+        /// </summary>
+        /// <value>
+        /// The line number.
+        /// </value>
+        public int LineNumber
+        {
+            get
+            {
+                return lineNumber;
             }
         }
 

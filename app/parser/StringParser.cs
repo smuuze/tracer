@@ -78,7 +78,7 @@ namespace Tracer.app.modules
         /// </summary>
         /// <param name="byteArray">The byte array.</param>
         /// <returns></returns>
-        public string byteArray2HexString(byte[] byteArray)
+        public string byteArray2HexString(byte[] byteArray, char seperator = '0')
         {
             StringBuilder strB = new StringBuilder();
 
@@ -103,6 +103,11 @@ namespace Tracer.app.modules
                 else
                 {
                     strB.Append((char)('A' + (nibbleL - 10)));
+                }
+
+                if (seperator != '0')
+                {
+                    strB.Append(seperator);
                 }
             }
 

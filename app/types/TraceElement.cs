@@ -7,7 +7,7 @@ using Tracer.app.types;
 
 namespace Tracer.app.types
 {
-    class TraceElement
+    public class TraceElement
     {
         /// <summary>
         /// The type
@@ -28,6 +28,11 @@ namespace Tracer.app.types
         /// The file name
         /// </summary>
         private string fileName;
+
+        /// <summary>
+        /// The code line
+        /// </summary>
+        private string codeLine;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TraceElement"/> class.
@@ -66,6 +71,10 @@ namespace Tracer.app.types
             }
         }
 
+        /// <summary>
+        /// Gets the byte.
+        /// </summary>
+        /// <returns></returns>
         public byte getByte()
         {
             if (type != TraceType.BYTE)
@@ -76,6 +85,10 @@ namespace Tracer.app.types
             return data[0];
         }
 
+        /// <summary>
+        /// Gets the word.
+        /// </summary>
+        /// <returns></returns>
         public UInt16 getWord()
         {
             if (type != TraceType.WORD)
@@ -84,13 +97,17 @@ namespace Tracer.app.types
             }
 
             UInt16 word = 0;
-            word += (UInt16)data[1];
-            word <<= 8;
             word += (UInt16)data[0];
+            word <<= 8;
+            word += (UInt16)data[1];
 
             return word;
         }
 
+        /// <summary>
+        /// Gets the long.
+        /// </summary>
+        /// <returns></returns>
         public UInt32 getLong()
         {
             if (type != TraceType.LONG)
@@ -98,25 +115,24 @@ namespace Tracer.app.types
                 return 0;
             }
 
-            UInt16 integer = 0;
-            integer += (UInt16)data[3];
-            integer <<= 24;
-            integer += (UInt16)data[2];
-            integer <<= 16;
-            integer += (UInt16)data[1];
+            UInt32 integer = 0;
+            integer += (UInt32)data[0];
             integer <<= 8;
-            integer += (UInt16)data[0];
+            integer += (UInt32)data[1];
+            integer <<= 8;
+            integer += (UInt32)data[2];
+            integer <<= 8;
+            integer += (UInt32)data[3];
 
             return integer;
         }
 
+        /// <summary>
+        /// Gets the array.
+        /// </summary>
+        /// <returns></returns>
         public byte[] getArray()
         {
-            if (type != TraceType.ARRAY)
-            {
-                return new byte[0];
-            }
-
             return data;
         }
 
@@ -131,6 +147,19 @@ namespace Tracer.app.types
             get
             {
                 return fileName;
+            }
+        }
+
+        public string CodeLine
+        {
+            get
+            {
+                return codeLine;
+            }
+
+            set
+            {
+                codeLine = value;
             }
         }
 

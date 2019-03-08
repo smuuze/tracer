@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tracer.app.types;
 
-namespace Tracer.app.types
+namespace Tracer.app.qeue
 {
     class TraceElementTable
     {
@@ -50,7 +51,7 @@ namespace Tracer.app.types
         }
 
         /// <summary>
-        /// Prevents a default instance of the <see cref="TraceElementTable"/> class from being created.
+        /// Prevents a default instance of the <see cref="TraceRawElementTable"/> class from being created.
         /// </summary>
         private TraceElementTable()
         {
@@ -103,7 +104,7 @@ namespace Tracer.app.types
         /// <returns></returns>
         public TraceElement getNext()
         {
-            TraceElement element = new TraceElement();
+            TraceElement element = null;// new TraceElement();
 
             lock (_qeueLock)
             {
