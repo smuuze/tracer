@@ -118,5 +118,14 @@ namespace Tracer.app.intern
                 updateHandler.Event_UpdateNotification.Invoke();
             }
         }
+
+        /// <summary>
+        /// Debugs the specified debug MSG.
+        /// </summary>
+        /// <param name="debugMsg">The debug MSG.</param>
+        private void debug(string debugMsg)
+        {
+            Debug.DebugFactory.getInstance().debug(Debug.DEBUG_MODE.CONSOLE, debugMsg);
+        }
     }
 }

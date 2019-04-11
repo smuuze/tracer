@@ -33,6 +33,13 @@ namespace TaskEngineModule
             parentEngine = engine;
             intervalTImeoutMillis = timeout;
             taskIntervalTimer = new Stopwatch();
+        }
+
+        /// <summary>
+        /// Starts this instance.
+        /// </summary>
+        public void start()
+        {
             taskIntervalTimer.Start();
         }
 

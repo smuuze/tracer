@@ -65,10 +65,10 @@ namespace Tracer.gui
 
         public MainWindow()
         {
-            initUserContext();
+            DebugFactory.getInstance().DebugLevel = DEBUG_LEVEL.ALL;
+            debugMode = DEBUG_MODE.CONSOLE;
 
-            DebugFactory.getInstance().DebugLevel = DEBUG_LEVEL.ERROR;
-            debugMode = DEBUG_MODE.FILE;
+            initUserContext();
 
             InitializeComponent();
 
@@ -395,6 +395,10 @@ namespace Tracer.gui
                 FileStream fileStream = File.Create(getUserContext().TracerConfigFile);
                 fileStream.Close();
             }
+
+            debug(DEBUG_LEVEL.INFO, "MainWIndow.initUserContext() - User home directory   : " + getUserContext().TracerUserHome);
+            debug(DEBUG_LEVEL.INFO, "MainWIndow.initUserContext() - Tracer cfg directory  : " + getUserContext().TracerConfigFile);
+            debug(DEBUG_LEVEL.INFO, "MainWIndow.initUserContext() - Tracer Debug filename : " + getUserContext().TracerDebugFile);
         }
     }
 }

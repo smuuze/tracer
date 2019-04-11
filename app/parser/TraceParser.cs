@@ -28,7 +28,7 @@ namespace Tracer.app.modules
         /// <summary>
         /// The debug mode
         /// </summary>
-        private DEBUG_MODE debugMode = DEBUG_MODE.DISABLED;
+        private DEBUG_MODE debugMode = DEBUG_MODE.CONSOLE;
 
         /// <summary>
         /// The instance
@@ -88,6 +88,15 @@ namespace Tracer.app.modules
         }
 
         /// <summary>
+        /// Debugs the error.
+        /// </summary>
+        /// <param name="dString">The d string.</param>
+        private void debugError(string dString)
+        {
+            DebugFactory.getInstance().debug(Debug.DEBUG_LEVEL.ERROR, debugMode, dString);
+        }
+
+        /// <summary>
         /// Parses the trace data.
         /// </summary>
         /// <param name="traceRawData">The trace raw data.</param>
@@ -96,19 +105,19 @@ namespace Tracer.app.modules
         {
             if (traceRawData == null)
             {
-                debug("TracerDataCatcherTask() - Trace data is NULL");
+                debugError("TraceParser.parseTraceData() - Trace data is NULL");
                 return new TraceElement(TraceType.UNKNOWN, (UInt16)0, new byte[0], "");
             }
 
             if (traceRawData.Length < 2)
             {
-                debug("TracerDataCatcherTask() - Trace data is to short");
+                debugError("TraceParser.parseTraceData() - Trace data is to short");
                 return new TraceElement(TraceType.UNKNOWN, (UInt16)0, new byte[0], "");
             }
 
             if (traceRawData.Length != byteCount)
             {
-                debug(DEBUG_LEVEL.ERROR, "TracerDataCatcherTask() - Trace data length is invalid ( Length:" + traceRawData.Length + "Bytecount: " + byteCount + ")");
+                debugError("TraceParser.parseTraceData() - Trace data length is invalid ( Length:" + traceRawData.Length + "Bytecount: " + byteCount + ")");
                 return new TraceElement(TraceType.UNKNOWN, (UInt16)0, new byte[0], "");
             }
 
@@ -117,12 +126,12 @@ namespace Tracer.app.modules
             UInt16 lineNumber = getLineNumber(type, traceRawData);
             string fileName = getFileName(type, traceRawData).Replace('/','\\');
 
-            debug("TracerDataCatcherTask() - New Traceelement --- ");
-            debug("TracerDataCatcherTask() - Data: " + StringParser.getInstance().byteArray2HexString(traceRawData));
-            debug("TracerDataCatcherTask() - Type: " + type);
-            debug("TracerDataCatcherTask() - File: " + fileName);
-            debug("TracerDataCatcherTask() - Line: " + lineNumber);
-            debug("TracerDataCatcherTask() - Data: " + StringParser.getInstance().byteArray2HexString(data));
+            debug("TraceParser.parseTraceData() - New Traceelement --- ");
+            debug("TraceParser.parseTraceData() - Data: " + StringParser.getInstance().byteArray2HexString(traceRawData));
+            debug("TraceParser.parseTraceData() - Type: " + type);
+            debug("TraceParser.parseTraceData() - File: " + fileName);
+            debug("TraceParser.parseTraceData() - Line: " + lineNumber);
+            debug("TraceParser.parseTraceData() - Data: " + StringParser.getInstance().byteArray2HexString(data));
 
             return new TraceElement(type, lineNumber, data, fileName);
         }

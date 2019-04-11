@@ -143,7 +143,7 @@ namespace Tracer.app.task
         /// </summary>
         public void initiate()
         {
-
+            this.start();
         }
 
         /// <summary>

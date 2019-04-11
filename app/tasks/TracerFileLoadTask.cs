@@ -29,10 +29,10 @@ namespace Tracer.app.task
         /// </summary>
         /// <param name="engine">The engine.</param>
         /// <param name="timeout">The timeout.</param>
-        public TracerFileLoadTask(TaskEngine engine, long timeout)
-            : base(engine, timeout)
+        public TracerFileLoadTask(TaskEngine engine, long timeout) : base(engine, timeout)
         {
-            debugMode = Debug.DEBUG_MODE.FILE;
+            debugMode = Debug.DEBUG_MODE.CONSOLE;
+            actualTaskState = BasicTaskStates.TASK_STATE_ILDE;
             debug("TracerFileLoadTask() - Created");
         }
 
@@ -95,7 +95,9 @@ namespace Tracer.app.task
 
                     if (!getContext().TraceActive)
                     {
-                        actualTaskState = BasicTaskStates.TASK_STATE_FINISH;
+                        debug("TracerFileLoadTask.execute() - Tracing not active anymore - go into idle");
+
+                        actualTaskState = BasicTaskStates.TASK_STATE_ILDE;
                         break;
                     }
 
@@ -113,9 +115,15 @@ namespace Tracer.app.task
 
                         string[] fileContent = getFileFactory().getFileContentAsLineArray(filePath);
 
-                        if (traceElement.LineNumber > fileContent.Length - 1)
+                        if (fileContent.Length == 0)
                         {
                             debug(DEBUG_LEVEL.ERROR, "TracerFileLoadTask.execute() - File not found !!! --- (" + filePath + ")");
+                            continue;
+                        }
+
+                        if (traceElement.LineNumber > fileContent.Length - 1)
+                        {
+                            debug(DEBUG_LEVEL.ERROR, "TracerFileLoadTask.execute() - Error reading file !!! --- (" + filePath + ")");
                             continue;
                         }
 
@@ -125,9 +133,6 @@ namespace Tracer.app.task
 
                     this.invokeEvent(TracerEventType.NEW_TRACE_RECORD);
 
-                    break;
-
-                case BasicTaskStates.TASK_STATE_FINISH:
                     break;
             }
         }
@@ -145,7 +150,7 @@ namespace Tracer.app.task
         /// </summary>
         public void terminate()
         {
-
+            this.start();
         }
     }
 }

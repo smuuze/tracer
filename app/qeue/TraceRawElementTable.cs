@@ -73,21 +73,25 @@ namespace Tracer.app.types
         {
             if (newElement == null)
             {
+                debugError("TraceRawElementTable.addRawElement() - New element is null !!! ---");
                 return;
             }
 
             if (newElement.Type == TraceType.UNKNOWN)
             {
+                debugError("TraceRawElementTable.addRawElement() - New element type is unknown !!! ---");
                 return;
             }
 
             if (newElement.FileName == null)
             {
+                debugError("TraceRawElementTable.addRawElement() - New elements filename is null !!! ---");
                 return;
             }
 
             if (newElement.FileName.Length == 0)
             {
+                debugError("TraceRawElementTable.addRawElement() - New elementfilename length is 0 !!! ---");
                 return;
             }
 
@@ -123,6 +127,15 @@ namespace Tracer.app.types
         public int getSize()
         {
             return rawElementQeue.Count;
+        }
+
+        /// <summary>
+        /// Debugs the error.
+        /// </summary>
+        /// <param name="msg">The MSG.</param>
+        private void debugError(string msg)
+        {
+            Debug.DebugFactory.getInstance().debug(Debug.DEBUG_LEVEL.ERROR, Debug.DEBUG_MODE.CONSOLE, msg);
         }
     }
 }

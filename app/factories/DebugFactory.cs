@@ -85,7 +85,7 @@ namespace Debug
         {
             if (level != debugLevel && debugLevel != DEBUG_LEVEL.ALL)
             {
-                return;
+               // return;
             }
 
             switch (dMode)
@@ -102,8 +102,6 @@ namespace Debug
                     writeIntoFile(dString);
                     break;
             }
-
-            debug(dMode, dString);
         }
 
         /// <summary>

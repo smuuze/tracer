@@ -181,5 +181,14 @@ namespace Tracer.app.types
                 connection = value;
             }
         }
+
+        /// <summary>
+        /// Debugs the information.
+        /// </summary>
+        /// <param name="msg">The MSG.</param>
+        private void debugInfo(string msg)
+        {
+            Debug.DebugFactory.getInstance().debug(Debug.DEBUG_LEVEL.INFO, Debug.DEBUG_MODE.CONSOLE, msg);
+        }
     }
 }
