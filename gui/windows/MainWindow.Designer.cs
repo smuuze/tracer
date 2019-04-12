@@ -37,6 +37,8 @@ namespace Tracer.gui
             this.labelWordLine = new System.Windows.Forms.Label();
             this.labelTraceFileLine = new System.Windows.Forms.Label();
             this.labelTraceCount = new System.Windows.Forms.Label();
+            this.traceFileContentTextBox = new System.Windows.Forms.RichTextBox();
+            this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.SuspendLayout();
@@ -46,6 +48,7 @@ namespace Tracer.gui
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this.traceFileContentTextBox, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -139,6 +142,19 @@ namespace Tracer.gui
             this.labelTraceCount.Size = new System.Drawing.Size(44, 27);
             this.labelTraceCount.TabIndex = 1;
             // 
+            // traceFileContentTextBox
+            // 
+            this.traceFileContentTextBox.BackColor = System.Drawing.Color.DarkBlue;
+            this.traceFileContentTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.traceFileContentTextBox.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.traceFileContentTextBox.ForeColor = System.Drawing.Color.Turquoise;
+            this.traceFileContentTextBox.Location = new System.Drawing.Point(334, 3);
+            this.traceFileContentTextBox.Name = "traceFileContentTextBox";
+            this.traceFileContentTextBox.ReadOnly = true;
+            this.traceFileContentTextBox.Size = new System.Drawing.Size(325, 409);
+            this.traceFileContentTextBox.TabIndex = 0;
+            this.traceFileContentTextBox.Text = "";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -148,6 +164,7 @@ namespace Tracer.gui
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "MainWindow";
             this.Text = "Tracer";
+            this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             this.tableLayoutPanel3.ResumeLayout(false);
@@ -168,6 +185,7 @@ namespace Tracer.gui
         private System.Windows.Forms.Label labelWordLine;
         private System.Windows.Forms.Label labelTraceFileLine;
         private System.Windows.Forms.Label labelTraceCount;
+        private System.Windows.Forms.RichTextBox traceFileContentTextBox;
 
 
 

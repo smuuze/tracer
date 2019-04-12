@@ -97,9 +97,9 @@ namespace Tracer.gui
 
             traceFileContentListBox = new TracerGuiFileContentListBox();
             fileContentBindingList = new BindingList<TraceFileContentElement>();
-
+            /*
             this.tableLayoutPanel1.Controls.Add(this.traceFileContentListBox, 1, 0);
-
+            */
             this.traceFileContentListBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.traceFileContentListBox.Location = new System.Drawing.Point(339, 3);
             this.traceFileContentListBox.Size = new System.Drawing.Size(320, 409);
@@ -108,6 +108,9 @@ namespace Tracer.gui
 
             traceFileContentListBox.HorizontalScrollbar = true;
             traceFileContentListBox.DataSource = fileContentBindingList;
+
+            // ------------------------------------------------------
+
 
             // ------------------------------------------------------
 
@@ -226,7 +229,7 @@ namespace Tracer.gui
             {
                 labelTraceFileLine.Text = Convert.ToString(traceItem.LineNumber + 1);
                 traceFileContentListBox.ActiveLineNumber = traceItem.LineNumber + 1;
-                traceFileContentListBox.SelectedIndex = traceItem.LineNumber;
+                // ---------------------------------traceFileContentListBox.SelectedIndex = traceItem.LineNumber;
                 //traceFileContentListBox.Refresh();
                 return;
             }
@@ -236,16 +239,28 @@ namespace Tracer.gui
 
             traceFileContentListBox.ActiveLineNumber = traceItem.LineNumber + 1;
             traceFileContentListBox.ActualFileName = traceItem.FileName;
-            fileContentBindingList.Clear();
+            //fileContentBindingList.Clear(); ------------------------------------------------------
+            this.traceFileContentTextBox.Clear();
 
             string[] fileContent = File_Factory.FileFactory.getInstance().getFileContentAsLineArray(TracerContext.getInstance().BasicFilePath + traceItem.FileName);
 
             for (int i = 0; i < fileContent.Length; i++ )
             {
-                fileContentBindingList.Add(new TraceFileContentElement(i + 1, fileContent[i]));
+                // -------------------------fileContentBindingList.Add(new TraceFileContentElement(i + 1, fileContent[i]));
+                if (i == traceItem.LineNumber)
+                {
+                    this.traceFileContentTextBox.SelectionBackColor = Color.Blue;
+                }
+                else
+                {
+                    this.traceFileContentTextBox.SelectionBackColor = Color.DarkBlue;
+                }
+
+                this.traceFileContentTextBox.AppendText(fileContent[i]);
+                this.traceFileContentTextBox.AppendText("\n");
             }
 
-            traceFileContentListBox.SelectedIndex = traceItem.LineNumber;            
+            //-------------traceFileContentListBox.SelectedIndex = traceItem.LineNumber;            
             return;
         }
 

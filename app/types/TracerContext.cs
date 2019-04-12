@@ -68,6 +68,10 @@ namespace Tracer.app.types
             }
             catch (NotSupportedException e)
             {
+                System.Console.WriteLine("TracerContext.TracerContext() - Exception in COntructor : " + e.ToString());
+            }
+            finally
+            {
 
             }
         }
