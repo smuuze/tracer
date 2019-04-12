@@ -317,7 +317,7 @@ namespace Tracer.app.modules
 
                 case TraceType.PASS:
 
-                    offset = RAW_DATA_INDEX_OF_TRACE_TYPE + 2;
+                    offset = RAW_DATA_INDEX_OF_TRACE_TYPE + 3;
                     break;
 
                 case TraceType.BYTE:
@@ -345,7 +345,10 @@ namespace Tracer.app.modules
             byte[] fileNameRaw = new byte[length];
 
             Array.Copy(traceRawData, offset, fileNameRaw, 0, length);
-            return StringParser.getInstance().hexString2AsciiString(StringParser.getInstance().byteArray2HexString(fileNameRaw));
+            string hexString = StringParser.getInstance().byteArray2HexString(fileNameRaw);
+            string asciiString = StringParser.getInstance().hexString2AsciiString(hexString);
+
+            return asciiString;
         }
     }
 }
