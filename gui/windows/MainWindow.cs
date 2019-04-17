@@ -121,6 +121,7 @@ namespace Tracer.gui
             this.traceListBox.KeyDown += new KeyEventHandler(onKeyDown);
             this.KeyDown += new KeyEventHandler(onKeyDown);
             this.traceFileContentListBox.KeyDown += new KeyEventHandler(onKeyDown);
+            this.traceFileContentTextBox.KeyDown += new KeyEventHandler(onKeyDown);
 
             progressTraceWindow = new TraceInProgressWindow();
             progressTraceWindow.Event_UpdateNotification += new CommonWindow.UpdateNotificationHandler(onWindowEvent);
@@ -231,7 +232,7 @@ namespace Tracer.gui
                 traceFileContentListBox.ActiveLineNumber = traceItem.LineNumber + 1;
                 // ---------------------------------traceFileContentListBox.SelectedIndex = traceItem.LineNumber;
                 //traceFileContentListBox.Refresh();
-                return;
+                //return;
             }
 
             labelTraceFilePath.Text = traceItem.FileName;
@@ -256,11 +257,14 @@ namespace Tracer.gui
                     this.traceFileContentTextBox.SelectionBackColor = Color.DarkBlue;
                 }
 
+                this.traceFileContentTextBox.AppendText((i + 1) + "\t");
                 this.traceFileContentTextBox.AppendText(fileContent[i]);
                 this.traceFileContentTextBox.AppendText("\n");
             }
 
-            //-------------traceFileContentListBox.SelectedIndex = traceItem.LineNumber;            
+            traceFileContentTextBox.SelectionStart = traceFileContentTextBox.Find(traceFileContentTextBox.Lines[traceItem.LineNumber]);
+            traceFileContentTextBox.ScrollToCaret();
+    
             return;
         }
 
